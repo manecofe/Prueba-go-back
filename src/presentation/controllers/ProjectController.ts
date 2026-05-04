@@ -16,7 +16,7 @@ export class ProjectController {
     private deleteProjectUseCase: DeleteProjectUseCase
   ) {}
 
-  async getAll(req: Request, res: Response): Promise<void> {
+  async getAll(_req: Request, res: Response): Promise<void> {
     try {
       const projects = await this.getAllProjectsUseCase.execute();
       res.status(200).json(projects);

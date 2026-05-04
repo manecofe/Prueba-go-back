@@ -1,4 +1,4 @@
-import { PrismaClient, TaskStatus as PrismaTaskStatus, TaskPriority as PrismaTaskPriority } from '@prisma/client';
+import { PrismaClient, TaskStatus as PrismaTaskStatus } from '@prisma/client';
 import { ITaskRepository } from '../../core/domain/repositories/ITaskRepository';
 import { Task, TaskWithProject, CreateTaskData, UpdateTaskData, TaskFilters } from '../../core/domain/entities/Task';
 import { TaskStatus } from '../../core/domain/entities/enums';
@@ -79,12 +79,12 @@ export class PrismaTaskRepository implements ITaskRepository {
         ...data,
         status: 'TODO' as PrismaTaskStatus,
       },
-    });
+    }) as unknown as Task;
   }
 
   async update(id: string, data: UpdateTaskData): Promise<Task | null> {
     try {
-      const updateData: any = {};
+      const updateData: Record<string, any> = {};
       Object.entries(data).forEach(([key, value]) => {
         if (value !== null) {
           updateData[key] = value;
@@ -94,7 +94,7 @@ export class PrismaTaskRepository implements ITaskRepository {
       return await this.prisma.task.update({
         where: { id },
         data: updateData,
-      });
+      }) as unknown as Task;
     } catch (error) {
       return null;
     }
@@ -105,7 +105,7 @@ export class PrismaTaskRepository implements ITaskRepository {
       return await this.prisma.task.update({
         where: { id },
         data: { status: status as PrismaTaskStatus },
-      });
+      }) as unknown as Task;
     } catch (error) {
       return null;
     }

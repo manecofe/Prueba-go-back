@@ -6,6 +6,8 @@ import { CreateTaskUseCase } from '../../core/application/use-cases/tasks/Create
 import { UpdateTaskUseCase } from '../../core/application/use-cases/tasks/UpdateTaskUseCase';
 import { UpdateTaskStatusUseCase } from '../../core/application/use-cases/tasks/UpdateTaskStatusUseCase';
 import { DeleteTaskUseCase } from '../../core/application/use-cases/tasks/DeleteTaskUseCase';
+import { CreateTaskData, UpdateTaskData, TaskFilters } from '../../core/domain/entities/Task';
+import { TaskStatus } from '../../core/domain/entities/enums';
 import { 
   CreateTaskSchema, 
   UpdateTaskSchema, 
@@ -28,7 +30,7 @@ export class TaskController {
   async getAll(req: Request, res: Response): Promise<void> {
     try {
       const filters = TaskFiltersSchema.parse(req.query);
-      const tasks = await this.getAllTasksUseCase.execute(filters);
+      const tasks = await this.getAllTasksUseCase.execute(filters as TaskFilters);
       res.status(200).json(tasks);
     } catch (error) {
       if (error instanceof ZodError) {
@@ -74,7 +76,7 @@ export class TaskController {
   async create(req: Request, res: Response): Promise<void> {
     try {
       const validatedData = CreateTaskSchema.parse(req.body);
-      const task = await this.createTaskUseCase.execute(validatedData);
+      const task = await this.createTaskUseCase.execute(validatedData as CreateTaskData);
 
       if (!task) {
         res.status(400).json({ error: 'Project not found' });
@@ -99,7 +101,7 @@ export class TaskController {
     try {
       const { id } = req.params;
       const validatedData = UpdateTaskSchema.parse(req.body);
-      const task = await this.updateTaskUseCase.execute(id, validatedData);
+      const task = await this.updateTaskUseCase.execute(id, validatedData as UpdateTaskData);
 
       if (!task) {
         res.status(404).json({ error: 'Task not found' });
@@ -124,7 +126,7 @@ export class TaskController {
     try {
       const { id } = req.params;
       const { status } = UpdateTaskStatusSchema.parse(req.body);
-      const task = await this.updateTaskStatusUseCase.execute(id, status);
+      const task = await this.updateTaskStatusUseCase.execute(id, status as TaskStatus);
 
       if (!task) {
         res.status(404).json({ error: 'Task not found' });
