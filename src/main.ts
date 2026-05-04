@@ -86,18 +86,22 @@ app.use('/api/tasks', createTaskRoutes(taskController));
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`� API Docs available at http://localhost:${PORT}/api-docs`);
-  console.log(`�📊 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🌐 CORS enabled for: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`📚 API Docs available at http://localhost:${PORT}/api-docs`);
+    console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🌐 CORS enabled for: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
+  });
 
-process.on('SIGINT', async () => {
-  console.log('\n🛑 Shutting down gracefully...');
-  await prisma.$disconnect();
-  process.exit(0);
-});
+  process.on('SIGINT', async () => {
+    console.log('\n🛑 Shutting down gracefully...');
+    await prisma.$disconnect();
+    process.exit(0);
+  });
+}
+
+export default app;
 
 process.on('SIGTERM', async () => {
   console.log('\n🛑 Shutting down gracefully...');
